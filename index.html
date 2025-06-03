@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PPDB SMK Bina Informatika</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #bbdefb);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: auto;
+      padding: 20px;
+    }
+
+    .poster {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      padding: 30px;
+      max-width: 1000px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      animation: slideIn 1.2s ease;
+      margin-top: 800px;
+    }
+
+    .school-logo {
+      width: 100px;
+      margin-bottom: 20px;
+      animation: fadeInDown 1s ease-in-out;
+    }
+
+    .free-dsp {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #d32f2f;
+      margin-bottom: 20px;
+      animation: pulse 1.5s infinite;
+      text-shadow: 0 0 10px rgba(255,0,0,0.4);
+    }
+
+    .bubble {
+      background: #1976d2;
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: bold;
+      padding: 20px;
+      border-radius: 40px;
+      display: inline-block;
+      margin-bottom: 20px;
+      animation: bounce 1s ease infinite alternate;
+    }
+
+    .highlight {
+      color: #ffeb3b;
+      font-size: 2rem;
+    }
+
+    .info-text {
+      font-size: 1.1rem;
+      color: #333;
+      margin: 15px 0 30px;
+    }
+
+    .cta-button {
+      background-color: #0d47a1;
+      color: #fff;
+      border: none;
+      padding: 14px 30px;
+      font-size: 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .cta-button:hover {
+      background-color: #1565c0;
+    }
+
+    .poster img.poster-image {
+      width: 380px;
+      border-radius: 10px;
+      margin-top: 20px;
+      animation: floatImage 3s ease-in-out infinite;
+    }
+
+    .majors-container {
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .major-box {
+      background: #e3f2fd;
+      border: 2px solid #1976d2;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 15px 0;
+      transition: background 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    .major-box:hover {
+      background: #bbdefb;
+      transform: scale(1.02);
+    }
+
+    .major-box h3 {
+      margin-top: 0;
+      color: #0d47a1;
+    }
+
+    .major-box p {
+      margin: 5px 0;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    @keyframes floatImage {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="poster">
+    <img src="111.jpg" alt="Logo SMK Bina Informatika" class="school-logo">
+
+    <div class="free-dsp">FREE DSP!</div>
+
+    <div class="bubble">
+      CUMA BAYAR <span class="highlight">400.000</span><br>
+      KALIAN UDAH BISA SEKOLAH DI SMK BINA INFORMATIKA LOHH !!
+    </div>
+
+    <div class="info-text">
+      Ayo buruan daftar sebelum kuota habis! Biaya terjangkau, fasilitas lengkap, dan jurusan unggulan RPL, TKJ, OTKP, PKM dan Multimedia menantimu.
+    </div>
+
+   
+
+    <br>
+    <img src="yy.jpg" alt="Poster Siswa SMK" class="poster-image">
+
+    <div class="majors-container">
+      <div class="major-box" onclick="window.location.href='rpl.html'">
+        <h3>RPL (Rekayasa Perangkat Lunak)</h3>
+
+      </div>
+
+      <div class="major-box"onclick="window.location.href='tkj.html'">
+        <h3>TKJ (Teknik Komputer dan Jaringan)</h3>
+        
+      </div>
+
+      <div class="major-box"onclick="window.location.href='otkp.html'">
+        <h3>OTKP (Otomatisasi dan Tata Kelola Perkantoran)</h3>
+
+      </div>
+
+      <div class="major-box"onclick="window.location.href='pkm.html'">
+        <h3>PKM (Perbankan dan Keuangan Makro)</h3>
+       
+      </div>
+
+      <div class="major-box"onclick="window.location.href='mm.html'">
+        <h3>Multimedia (MM)</h3>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catch the Falling Objects - Optimized</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #6dd5fa, #2980b9);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+    }
+    #game {
+      position: relative;
+      width: 400px;
+      height: 600px;
+      margin: 40px auto 10px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    #player {
+      position: absolute;
+      bottom: 20px;
+      left: 180px;
+      width: 40px;
+      height: 40px;
+      background: #f39c12;
+      border-radius: 50%;
+      transition: left 0.1s ease;
+      box-shadow: 0 0 10px #f39c12;
+    }
+    .object {
+      position: absolute;
+      top: -40px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+    .red {
+      background: #e74c3c;
+    }
+    .blue {
+      background: #3498db;
+    }
+    #scoreboard, #lives {
+      text-align: center;
+      color: #fff;
+      font-size: 24px;
+      margin-top: 10px;
+      user-select: none;
+    }
+    #lives {
+      font-size: 18px;
+    }
+    #levelMsg {
+      position: absolute;
+      top: 250px;
+      width: 100%;
+      text-align: center;
+      font-size: 36px;
+      color: #f39c12;
+      font-weight: 700;
+      text-shadow: 0 0 5px #f39c12;
+      display: none;
+      pointer-events: none;
+    }
+    #gameOver {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      display: none;
+      z-index: 10;
+    }
+    #gameOver button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      background: #f39c12;
+      cursor: pointer;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<div id="scoreboard">Score: 0</div>
+<div id="lives">Lives: 3</div>
+<div id="game">
+  <div id="player"></div>
+  <div id="levelMsg">Level Up!</div>
+  <div id="gameOver">
+    Game Over<br />
+    <button onclick="startGame()">Restart</button>
+  </div>
+</div>
+
+<!-- Tombol Kembali -->
+<div style="text-align: center; margin: 20px;">
+  <a href="index.html" style="
+    display: inline-block;
+    padding: 10px 20px;
+    background: #2c3e50;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: background 0.3s ease;
+  " onmouseover="this.style.background='#34495e'" onmouseout="this.style.background='#2c3e50'">
+    ← Kembali
+  </a>
+</div>
+
+<div id="copyright" style="text-align: center;">
+  <p>Copyright©Ramdan.z 2030</p>
+</div>
+
+<script>
+  const game = document.getElementById('game');
+  const player = document.getElementById('player');
+  const scoreboard = document.getElementById('scoreboard');
+  const livesDisplay = document.getElementById('lives');
+  const gameOverScreen = document.getElementById('gameOver');
+  const levelMsg = document.getElementById('levelMsg');
+
+  let playerPos = 180;
+  const playerSpeed = 40;
+  let score = 0;
+  let level = 1;
+  let lives = 3;
+  let objects = [];
+  let isGameOver = false;
+  let fallSpeed = 1.5;
+  let createInterval;
+
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playBeep(freq = 440, duration = 100) {
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.frequency.value = freq;
+    oscillator.type = 'square';
+    oscillator.start();
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    oscillator.stop(audioCtx.currentTime + duration / 1000);
+  }
+
+  function movePlayer(dir) {
+    if(isGameOver) return;
+    playerPos += dir * playerSpeed;
+    if (playerPos < 0) playerPos = 0;
+    if (playerPos > 360) playerPos = 360;
+    player.style.left = playerPos + 'px';
+    playBeep(600, 50);
+  }
+
+  function createObject() {
+    if(isGameOver || objects.length > 20) return;
+    let rand = Math.random();
+    if(rand > 0.6) return;
+    const obj = document.createElement('div');
+    obj.classList.add('object');
+    obj.style.left = Math.floor(Math.random() * 370) + 'px';
+    obj.style.top = '-30px';
+    obj.classList.add(rand > 0.5 ? 'blue' : 'red');
+    game.appendChild(obj);
+    objects.push(obj);
+  }
+
+  function updateObjects() {
+    fallSpeed = 1.5 + score * 0.1;
+    let remainingObjects = [];
+    for (let i = 0; i < objects.length; i++) {
+      const obj = objects[i];
+      let top = parseFloat(obj.style.top);
+      top += fallSpeed;
+      obj.style.top = top + 'px';
+
+      const objLeft = parseInt(obj.style.left);
+
+      if (top > 570) {
+        if(obj.classList.contains('red')){
+          lives -= 1;
+          updateLives();
+          playBeep(200, 200);
+          if(lives <= 0){
+            endGame();
+          }
+        }
+        game.removeChild(obj);
+        continue;
+      }
+
+      if (
+        top > 540 &&
+        objLeft + 30 > playerPos &&
+        objLeft < playerPos + 40
+      ) {
+        if(obj.classList.contains('red')){
+          score += 1;
+          playBeep(800, 100);
+        } else if(obj.classList.contains('blue')){
+          score += 3;
+          playBeep(1200, 150);
+        }
+        scoreboard.textContent = 'Score: ' + score;
+        checkLevelUp();
+        game.removeChild(obj);
+        continue;
+      }
+
+      remainingObjects.push(obj);
+    }
+    objects = remainingObjects;
+  }
+
+  function checkLevelUp(){
+    let newLevel = Math.floor(score / 5) + 1;
+    if(newLevel > level){
+      level = newLevel;
+      levelMsg.style.display = 'block';
+      setTimeout(() => {
+        levelMsg.style.display = 'none';
+      }, 1500);
+    }
+  }
+
+  function updateLives(){
+    livesDisplay.textContent = 'Lives: ' + lives;
+  }
+
+  function endGame() {
+    isGameOver = true;
+    clearInterval(createInterval);
+    gameOverScreen.style.display = 'flex';
+  }
+
+  function animate() {
+    if (!isGameOver) {
+      updateObjects();
+      requestAnimationFrame(animate);
+    }
+  }
+
+  function startGame() {
+    score = 0;
+    level = 1;
+    lives = 3;
+    updateLives();
+    scoreboard.textContent = 'Score: 0';
+    isGameOver = false;
+    objects.forEach(obj => game.removeChild(obj));
+    objects = [];
+    gameOverScreen.style.display = 'none';
+    levelMsg.style.display = 'none';
+    playerPos = 180;
+    player.style.left = playerPos + 'px';
+    fallSpeed = 1.5;
+
+    createInterval = setInterval(createObject, 1000);
+    animate();
+  }
+
+  // Input: mouse + touch drag
+  let isDragging = false;
+  let dragStartX = 0;
+  let playerStartX = 0;
+
+  player.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    dragStartX = e.clientX;
+    playerStartX = playerPos;
+    e.preventDefault();
+  });
+  window.addEventListener('mouseup', () => isDragging = false);
+  window.addEventListener('mousemove', (e) => {
+    if(!isDragging) return;
+    let deltaX = e.clientX - dragStartX;
+    playerPos = playerStartX + deltaX;
+    playerPos = Math.max(0, Math.min(360, playerPos));
+    player.style.left = playerPos + 'px';
+  });
+
+  player.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    playerStartX = playerPos;
+    e.preventDefault();
+  });
+  window.addEventListener('touchend', () => isDragging = false);
+  window.addEventListener('touchmove', (e) => {
+    if(!isDragging) return;
+    let deltaX = e.touches[0].clientX - dragStartX;
+    playerPos = playerStartX + deltaX;
+    playerPos = Math.max(0, Math.min(360, playerPos));
+    player.style.left = playerPos + 'px';
+    e.preventDefault();
+  });
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') movePlayer(-1);
+    if (e.key === 'ArrowRight') movePlayer(1);
+  });
+
+  startGame();
+</script>
+
+</body>
+</html>
